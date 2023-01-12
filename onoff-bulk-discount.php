@@ -39,7 +39,12 @@
 		   $product->set_sale_price($new_price);
 		   $product->save();
 	   }else if($product->is_type('variable')){
-   
+		//echo '<script>alert('. var_dump($product) .')</script>';
+		$variations = $product->get_available_variations('array');
+		echo '<script>alert('. var_dump($variations) .')</script>';
+		/*foreach($variations as $variation){
+			echo '<script>alert('. $variation->get_id() .')</script>';
+		}*/
 	   }
 	}
 }, 10, 1);
