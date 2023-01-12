@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       OnOff Bulk Discount
+ * Plugin Name:       OnOff - Bulk Discount
  * Plugin URI:        https://onoff.si/
  * Description:       Handle the basics with this plugin.
  * Version:           1.0.0
@@ -8,27 +8,34 @@
  * Author URI:        https://www.linkedin.com/in/urban-puhek-2227261b7/
  */
 
-
  add_action( 'woocommerce_product_quick_edit_start', 'bbloomer_show_custom_field_quick_edit' );
  
  function bbloomer_show_custom_field_quick_edit() {
 	global $post;
-	?>
+	/*?>
 	<label>
 	   <span class="title">Custom field</span>
 	   <span class="input-text-wrap">
-		  <input type="text" name="_custom_field" class="text" value="<?php esc_html( get_post_meta( $post->ID, '_custom_field', true ) );?>">
+		  <input id="onoff-discount-input" type="text" name="_custom_field" class="text" value="<?php echo esc_html( get_post_meta( $post->ID, '_custom_field', true ) );?>">
 	   </span>
 	</label>
 	<br class="clear" />
-	<?php
+	<?php*/
+
+	woocommerce_wp_text_input( 
+		array( 
+			'id'          => '_custom_field', 
+			'label'       => __( 'Custom field', 'woocommerce' ),
+			'value'       => get_post_meta( $post->ID, '_custom_field', true ),		
+		)
+	);
  }
   
- add_action( 'manage_product_posts_custom_column', 'bbloomer_show_custom_field_quick_edit_data', 9999, 2 );
+ //add_action( 'manage_product_posts_custom_column', 'bbloomer_show_custom_field_quick_edit_data', 9999, 2 );
   
  function bbloomer_show_custom_field_quick_edit_data( $column, $post_id ){
 	 if ( 'name' !== $column ) return;
-	 echo '<div>Custom field: <span id="cf_' . $post_id . '">' . esc_html( get_post_meta( $post_id, '_custom_field', true ) ) . '</span></div>';
+	 /*echo '<div>Custom field: <span id="cf_' . $post_id . '">' . esc_html( get_post_meta( $post_id, '_custom_field', true ) ) . '</span></div>';
 	wc_enqueue_js( "
 	   $('#the-list').on('click', '.editinline', function() {
 		  var post_id = $(this).closest('tr').attr('id');
@@ -36,16 +43,25 @@
 		  var custom_field = $('#cf_' + post_id).text();
 		  $('input[name=\'_custom_field\']', '.inline-edit-row').val(custom_field);
 		 });
-	" );
+	" );*/
  }
   
  add_action( 'woocommerce_product_quick_edit_save', 'bbloomer_save_custom_field_quick_edit' );
   
  function bbloomer_save_custom_field_quick_edit( $product ) {
-	 $post_id = $product->get_id();
+	 $product_id = $product->get_id();
+
 	 if ( isset( $_REQUEST['_custom_field'] ) ) {
 		 $custom_field = $_REQUEST['_custom_field'];
-		 update_post_meta( $post_id, '_custom_field', wc_clean( $custom_field ) );
+		 update_post_meta( $product_id, '_custom_field', esc_attr( $custom_field) );
 	 }
+
+	 if($product->get_type() == 'simple'){
+		$current_product_price = $product->get_regular_price();
+		$new_price = ((100-$custom_field)*$current_product_price)/100;
+		$product->set_sale_price($new_price);
+		$product->save();
+	}else if($product->get_type() == 'variable'){
+
+	}
  }
- 
