@@ -39,17 +39,13 @@
 		   $product->set_sale_price($new_price);
 		   $product->save();
 	   }else if($product->is_type('variable')){
-		//echo '<script>alert('. var_dump($product) .')</script>';
 		$variations = $product->get_children();
-		//echo '<script>alert('. var_dump($variations) .')</script>';
 		foreach($variations as $variation){
-			//echo '<script>alert('. $variation .')</script>';
 			$varible_product = wc_get_product($variation);
 			$current_varible_product = $varible_product->get_regular_price();
 			$new_variable_price = ((100-$custom_field)*$current_varible_product)/100;
 			$varible_product->set_sale_price($new_variable_price);
 			$varible_product->save();
-			//echo '<script>alert('. $varible_product->get_regular_price() .')</script>';
 		}
 	   }
 	}

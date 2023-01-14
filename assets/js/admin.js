@@ -24,6 +24,7 @@ jQuery(function(){
 
         if (product_type =='simple' || product_type=='variable') {
             jQuery('.custom_field_demo', '.inline-edit-row').show();
+            jQuery('.onoff-bulk-discoun-br', '.inline-edit-row').css("display", "block");
         } else {
             jQuery('.custom_field_demo', '.inline-edit-row').css("display", "none");
             jQuery('.onoff-bulk-discoun-br', '.inline-edit-row').css("display", "none");
