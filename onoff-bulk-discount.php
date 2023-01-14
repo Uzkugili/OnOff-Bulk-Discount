@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       OnOff - Bulk Discount
  * Plugin URI:        https://onoff.si/
- * Description:       Handle the basics with this plugin.
+ * Description:       This plugin adds % discount field to Quick edit and Bulk edit for SIMPLE and VARIABLE products.
  * Version:           1.0.0
  * Author:            Urban Puhek
  * Author URI:        https://www.linkedin.com/in/urban-puhek-2227261b7/
