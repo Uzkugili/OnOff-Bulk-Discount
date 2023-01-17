@@ -22,30 +22,38 @@ add_action( 'woocommerce_product_quick_edit_start', 'onoff_bulk_discount_field_i
 function onoff_bulk_discount_field_input(){
 	global $post;
 	?>
-	<label class="custom_field_demo">
-		<span class="title">Discount (%)</span>
-		<span class="input-text-wrap">
-			<input type="text" name="_custom_field" class="text" value="">
-		</span>
+	<label class="onoff-bulk-discoun">
+    <?php woocommerce_wp_text_input( array(
+            'id'                => '_discount_field',
+            'type'              => 'number',
+            'label'             => __( 'Minimum Quantity', 'woocommerce-max-quantity' ),
+            'placeholder'       => '',
+            'desc_tip'          => 'true',
+            'description'       => __( 'Set a minimum allowed quantity limit (a number greater than 0).', 'woocommerce' ),
+            'custom_attributes' => array( 'step'  => 'any', 'min'   => 0, 'max'   => 100),
+    ) );?>
 	</label>
 	<br class="clear onoff-bulk-discoun-br" />
 	<?php
 }
 
-add_action( 'woocommerce_product_bulk_edit_save', 'onoff_bulk_discount_field_save' );
+//Add Action for Bulk Edit
+add_action( 'woocommerce_product_bulk_edit_save', 'onoff_bulk_discount_field_save', 10, 1 );
 
-add_action( 'woocommerce_product_quick_edit_save', 'onoff_bulk_discount_field_save' , 10, 1);
+//Add action for Quick Edit
+add_action( 'woocommerce_product_quick_edit_save', 'onoff_bulk_discount_field_save' , 10, 2);
+
 
 function onoff_bulk_discount_field_save( $product ) {
 	$product_id = $product->get_id();
 
-	if ( isset( $_REQUEST['_custom_field'] ) ) {
-		$custom_field = $_REQUEST['_custom_field'];
-		update_post_meta( $product_id, '_custom_field', wc_clean( $custom_field) );
+	if ( isset( $_REQUEST['_discount_field'] ) ) {
+		$discount_field = $_REQUEST['_discount_field'];
+		update_post_meta( $product_id, '_discount_field', wc_clean( $discount_field) );
 
 		if($product->is_type('simple')){
 			$current_product_price = $product->get_regular_price();
-			$new_price = ((100-$custom_field)*$current_product_price)/100;
+			$new_price = ((100-$discount_field)*$current_product_price)/100;
 			$product->set_sale_price($new_price);
 			$product->save();
 		}else if($product->is_type('variable')){
@@ -53,7 +61,7 @@ function onoff_bulk_discount_field_save( $product ) {
 		foreach($variations as $variation){
 			$varible_product = wc_get_product($variation);
 			$current_varible_product = $varible_product->get_regular_price();
-			$new_variable_price = ((100-$custom_field)*$current_varible_product)/100;
+			$new_variable_price = ((100-$discount_field)*$current_varible_product)/100;
 			$varible_product->set_sale_price($new_variable_price);
 			$varible_product->save();
 		}
@@ -61,14 +69,14 @@ function onoff_bulk_discount_field_save( $product ) {
 	}
 }
   
- add_action( 'manage_product_posts_custom_column', function ( $column, $post_id ){
-	 if ( 'name' !== $column ) return;
+add_action( 'manage_product_posts_custom_column', function ( $column, $post_id ){
+	if ( 'name' !== $column ) return;
 
 	?>
-	<div class="hidden custom_field_demo_inline" id="custom_field_demo_inline_<?php echo $post_id; ?>">
-		<div id="_custom_field_demo"><?php echo get_post_meta($post_id,'_custom_field',true); ?></div>
- 	</div>
+	<div class="hidden onoff-bulk-discoun-inline" id="onoff-bulk-discoun-inline_<?php echo $post_id; ?>">
+		<div id="onoff-bulk-discoun"><?php echo get_post_meta($post_id,'_discount_field',true); ?></div>
+	</div>
 
-	<?php
- }, 99, 2);
+<?php
+}, 99, 2);
   

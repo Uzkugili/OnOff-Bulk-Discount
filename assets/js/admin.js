@@ -10,10 +10,10 @@ jQuery(function(){
     
         post_id = post_id.replace("post-", "");
     
-        var $cfd_inline_data = jQuery('#custom_field_demo_inline_' + post_id),
+        var $cfd_inline_data = jQuery('#onoff-bulk-discoun-inline_' + post_id),
             $wc_inline_data = jQuery('#woocommerce_inline_' + post_id );
     
-        jQuery('input[name="_custom_field"]', '.inline-edit-row').val($cfd_inline_data.find("#_custom_field_demo").text());
+        jQuery('input[name="_discount_field"]', '.inline-edit-row').val($cfd_inline_data.find("#onoff-bulk-discoun").text());
     
         /**
          * Only show custom field for appropriate types of products (simple)
@@ -23,10 +23,10 @@ jQuery(function(){
         
 
         if (product_type =='simple' || product_type=='variable') {
-            jQuery('.custom_field_demo', '.inline-edit-row').show();
+            jQuery('.onoff-bulk-discoun', '.inline-edit-row').show();
             jQuery('.onoff-bulk-discoun-br', '.inline-edit-row').css("display", "block");
         } else {
-            jQuery('.custom_field_demo', '.inline-edit-row').css("display", "none");
+            jQuery('.onoff-bulk-discouno', '.inline-edit-row').css("display", "none");
             jQuery('.onoff-bulk-discoun-br', '.inline-edit-row').css("display", "none");
         }
     
