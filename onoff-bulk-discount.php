@@ -23,7 +23,7 @@ function onoff_bulk_discount_field_input(){
 	global $post;
 	?>
 	<label class="custom_field_demo">
-		<span class="title">Custom field</span>
+		<span class="title">Discount (%)</span>
 		<span class="input-text-wrap">
 			<input type="text" name="_custom_field" class="text" value="">
 		</span>
@@ -31,6 +31,8 @@ function onoff_bulk_discount_field_input(){
 	<br class="clear onoff-bulk-discoun-br" />
 	<?php
 }
+
+add_action( 'woocommerce_product_bulk_edit_save', 'onoff_bulk_discount_field_save' );
 
 add_action( 'woocommerce_product_quick_edit_save', 'onoff_bulk_discount_field_save' , 10, 1);
 
