@@ -23,15 +23,10 @@ function onoff_bulk_discount_field_input(){
 	global $post;
 	?>
 	<label class="onoff-bulk-discoun">
-    <?php woocommerce_wp_text_input( array(
-            'id'                => '_discount_field',
-            'type'              => 'number',
-            'label'             => __( 'Minimum Quantity', 'woocommerce-max-quantity' ),
-            'placeholder'       => '',
-            'desc_tip'          => 'true',
-            'description'       => __( 'Set a minimum allowed quantity limit (a number greater than 0).', 'woocommerce' ),
-            'custom_attributes' => array( 'step'  => 'any', 'min'   => 0, 'max'   => 100),
-    ) );?>
+	<span class="title">Discount (%)</span>
+		<span class="input-text-wrap">
+			<input type="text" name="_discount_field" class="text" value="">
+		</span>
 	</label>
 	<br class="clear onoff-bulk-discoun-br" />
 	<?php
@@ -43,28 +38,44 @@ add_action( 'woocommerce_product_bulk_edit_save', 'onoff_bulk_discount_field_sav
 //Add action for Quick Edit
 add_action( 'woocommerce_product_quick_edit_save', 'onoff_bulk_discount_field_save' , 10, 2);
 
-
-function onoff_bulk_discount_field_save( $product ) {
+function onoff_bulk_discount_field_save( $product) {
+	//wp_die(isset( $_REQUEST['_discount_field'] ));
 	$product_id = $product->get_id();
 
-	if ( isset( $_REQUEST['_discount_field'] ) ) {
+	if($_REQUEST['_discount_field'] != NULL){
+		//wp_die($_REQUEST['_discount_field']);
+		//if ( isset( $_REQUEST['_discount_field'] ) ) {
 		$discount_field = $_REQUEST['_discount_field'];
+		if($discount_field <= 100 && $discount_field >= 0){
+			update_post_meta( $product_id, '_discount_field', wc_clean( $discount_field) );
+		}else{
+			wp_die('Discount can not be higher than 100% or smaller than 0%!');
+		}
+		//}
+	}else{
+		//wp_die('imamo error');
+		$discount_field = 0;
 		update_post_meta( $product_id, '_discount_field', wc_clean( $discount_field) );
+	}
 
-		if($product->is_type('simple')){
+	if($product->is_type('simple')){
+		//wp_die($product->get_regular_price());
+		if($product->get_regular_price() != NULL){
 			$current_product_price = $product->get_regular_price();
 			$new_price = ((100-$discount_field)*$current_product_price)/100;
 			$product->set_sale_price($new_price);
 			$product->save();
-		}else if($product->is_type('variable')){
+		}
+	}else if($product->is_type('variable')){
 		$variations = $product->get_children();
 		foreach($variations as $variation){
 			$varible_product = wc_get_product($variation);
-			$current_varible_product = $varible_product->get_regular_price();
-			$new_variable_price = ((100-$discount_field)*$current_varible_product)/100;
-			$varible_product->set_sale_price($new_variable_price);
-			$varible_product->save();
-		}
+			if($varible_product->get_regular_price() != NULL){
+				$current_varible_product = $varible_product->get_regular_price();
+				$new_variable_price = ((100-$discount_field)*$current_varible_product)/100;
+				$varible_product->set_sale_price($new_variable_price);
+				$varible_product->save();
+			}
 		}
 	}
 }
